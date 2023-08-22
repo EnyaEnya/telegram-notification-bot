@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+
+    <changeSet author="Tatyana" id="1">
+        <createTable tableName="bot_user">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="first_name" type="varchar(100)"/>
+            <column name="last_name" type="varchar(100)"/>
+            <column name="user_name" type="varchar(100)"/>
+            <column name="notification_subscribe" type="boolean"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Tatyana" id="2">
+        <createTable tableName="notification">
+            <column name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_notifications"/>
+            </column>
+            <column name="head" type="varchar(100)"/>
+            <column name="text" type="text"/>
+            <column name="receive_time" type="timestamp"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_notification_user" references="bot_user(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
