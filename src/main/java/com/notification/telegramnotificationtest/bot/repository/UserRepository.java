@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<BotUser, Long> {
 
-    @Query("select u from BotUser u where u.id = :userId")
+    @Query("from BotUser u where u.id = :userId")
     BotUser findUsers(Long userId);
+
+    @Query("select count(u) > 0 from BotUser u where u.id = :userId and u.notificationSubscribe = true")
+    boolean isActualSubscribeUsers(Long userId);
 
 }

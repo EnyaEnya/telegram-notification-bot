@@ -1,9 +1,8 @@
 package com.notification.telegramnotificationtest.bot.service;
 
-import com.notification.telegramnotificationtest.bot.dto.MessageDto;
+import com.notification.telegramnotificationtest.bot.dto.ReceiveMessageDto;
 
 public interface NotificationService {
 
-    String saveNotification(MessageDto messageDto);
-
+    String sendNotificationToUser(ReceiveMessageDto receiveMessageDto);
 }

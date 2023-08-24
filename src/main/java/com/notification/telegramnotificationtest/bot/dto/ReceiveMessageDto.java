@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-public class MessageDto {
+public class ReceiveMessageDto {
 
     private String head;
 

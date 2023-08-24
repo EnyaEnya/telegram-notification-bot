@@ -1,6 +1,7 @@
 package com.notification.telegramnotificationtest.bot.controller;
 
-import com.notification.telegramnotificationtest.bot.dto.MessageDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.notification.telegramnotificationtest.bot.dto.ReceiveMessageDto;
 import com.notification.telegramnotificationtest.bot.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ExternalController {
     }
 
     @PostMapping("/send-notification")
-    public ResponseEntity<String> sendNotification(@RequestBody MessageDto messageDto) {
-        return new ResponseEntity<>(notificationService.saveNotification(messageDto), HttpStatus.OK);
+    public ResponseEntity<String> sendNotification(@RequestBody ReceiveMessageDto receiveMessageDto) {
+        return new ResponseEntity<>(notificationService.sendNotificationToUser(receiveMessageDto), HttpStatus.OK);
     }
 }
