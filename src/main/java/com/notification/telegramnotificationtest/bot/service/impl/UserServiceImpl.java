@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public void findUser(User telegramUser) {
+    public void startSubscribe(User telegramUser) {
 
         BotUser user = userRepository.findUsers(telegramUser.getId());
 

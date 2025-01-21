@@ -11,15 +11,14 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-
-@Entity //todo уточнить
+@Entity
 @Getter
 @Setter
 @Table(name = "notification")
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY, generator = "notification_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String text;
@@ -30,5 +29,7 @@ public class Notification {
     private Instant receiveTime;
 
     private Long userId;
+
+//    private boolean isDelivered;
 
 }

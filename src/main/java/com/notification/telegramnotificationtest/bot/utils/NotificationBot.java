@@ -1,13 +1,12 @@
 package com.notification.telegramnotificationtest.bot.utils;
 
-import com.notification.telegramnotificationtest.bot.constants.BotMessageEnum;
 import com.notification.telegramnotificationtest.bot.exception.AlreadyHaveSubscribeException;
+import com.notification.telegramnotificationtest.bot.service.ITelegramFacade;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -21,12 +20,12 @@ public class NotificationBot extends SpringWebhookBot {
     String botUsername;
     String botToken;
 
-    MessageHandler messageHandler;
+    ITelegramFacade telegramFacade;
 
 
-    public NotificationBot(SetWebhook setWebhook, MessageHandler messageHandler) {
+    public NotificationBot(SetWebhook setWebhook, ITelegramFacade telegramFacade) {
         super(setWebhook);
-        this.messageHandler = messageHandler;
+        this.telegramFacade = telegramFacade;
     }
 
     @Override
@@ -34,19 +33,17 @@ public class NotificationBot extends SpringWebhookBot {
         try {
             return handleUpdate(update);
         } catch (AlreadyHaveSubscribeException e) {
-            return new SendMessage(update.getMessage().getChatId().toString(),
-                    BotMessageEnum.ALREADY_HAVE_SUBSCRIBE_EXCEPTION.getMessage());
+            return telegramFacade.sendAlreadyHaveSubscribeErrorMessage(update.getMessage().getChatId().toString());
         } catch (Exception e) {
-            return new SendMessage(update.getMessage().getChatId().toString(),
-                    BotMessageEnum.SUBSCRIBE_EXCEPTION.getMessage());
+            return telegramFacade.sendSubscribeErrorMessage(update.getMessage().getChatId().toString());
         }
     }
 
-    private BotApiMethod<?> handleUpdate(Update update) throws Exception {
+    private BotApiMethod<?> handleUpdate(Update update) {
         if (!update.hasCallbackQuery()) {
             Message message = update.getMessage();
             if (message != null) {
-                return messageHandler.answerMessage(update.getMessage());
+                return telegramFacade.answerMessage(update.getMessage());
             }
         }
         return null;

@@ -1,0 +1,28 @@
+services:
+  telegram-backend:
+    image: server:0.0.3
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://telegram-db/notification_test_db
+  telegram-db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: notification_test_db
+    healthcheck:
+      test: "pg_isready -U user -d test_task_db"
+      interval: "10s"
+      timeout: "5s"
+      retries: 5
+    volumes:
+      - 'telegram-postgres-data:/var/lib/postgresql/data'
+
+volumes:
+  telegram-postgres-data:
