@@ -17,7 +17,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: notification_test_db
     healthcheck:
-      test: "pg_isready -U user -d test_task_db"
+      test: "pg_isready -U user -d notification_test_db"
       interval: "10s"
       timeout: "5s"
       retries: 5
