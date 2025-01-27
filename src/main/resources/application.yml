@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: user
+    url: jdbc:postgresql://localhost:5432/notification_test_db
+    password: password
+  messages:
+    encoding: UTF-8
+    basename: site-messages
+  liquibase:
+    change-log: classpath:db/changelog.xml
+  jpa:
+    properties:
+      hibernate:
+        show_sql: 'true'
+  kafka:
+    bootstrap-servers: kafka-0:9092
+#    bootstrap-servers: localhost:29092 (for debug)
+    consumer:
+      group-id: "group-1"
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+topic:
+  telegram: telegram
+
+telegram:
+  api-url: https://api.telegram.org/
+  webhook-path: https://mycustomsubdomainboottest.loca.lt
+  bot-name: test_notification_with_kafka_bot
+  bot-token: 7807696914:AAFIcU9jFUSxjTqNOdlytzx9dDDErBk4u2w
+  bot-url: https://api.telegram.org/bot7807696914:AAFIcU9jFUSxjTqNOdlytzx9dDDErBk4u2w/sendMessage
+logging:
+  level:
+    org:
+      springframework:
+        web: debug

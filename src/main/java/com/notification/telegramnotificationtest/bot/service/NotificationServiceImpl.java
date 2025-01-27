@@ -1,21 +1,20 @@
-package com.notification.telegramnotificationtest.bot.service.impl;
+package com.notification.telegramnotificationtest.bot.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.notification.telegramnotificationtest.bot.dto.ReceiveMessageDto;
 import com.notification.telegramnotificationtest.bot.dto.SendMessageDto;
 import com.notification.telegramnotificationtest.bot.entity.Notification;
-import com.notification.telegramnotificationtest.bot.exception.ParseTelegramAnswerException;
+import com.notification.telegramnotificationtest.bot.events.TelegramNotificationEvent;
 import com.notification.telegramnotificationtest.bot.repository.NotificationRepository;
 import com.notification.telegramnotificationtest.bot.repository.UserRepository;
-import com.notification.telegramnotificationtest.bot.service.NotificationService;
+import com.notification.telegramnotificationtest.bot.service.interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -34,23 +33,34 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final UserRepository userRepository;
 
+    private final TransactionTemplate transactionTemplate;
 
     @Override
-    public String sendNotificationToUser(ReceiveMessageDto receiveMessageDto) {
+    public String sendNotificationPrimary(ReceiveMessageDto receiveMessageDto) {
 
         Long userId = receiveMessageDto.getUserId();
 
         Notification notification = new Notification();
-        notification.setHead(receiveMessageDto.getHead());
         notification.setText(receiveMessageDto.getText());
         notification.setReceiveTime(Instant.now());
         notification.setUserId(userId);
-        notificationRepository.save(notification);
 
-        return isUserSubscribe(userId) ? isSentNotification(mapReceiveMessageToSendMessage(receiveMessageDto)) : null;
+        transactionTemplate.execute(t -> notificationRepository.save(notification));
+
+        return isUserSubscribe(userId) ? sendNotificationToTelegram(mapReceiveMessageToSendMessage(receiveMessageDto)) : null;
     }
 
-    private String isSentNotification(SendMessageDto sendMessageDto) {
+    @Async
+    @EventListener
+    @Override
+    public void sendNotificationFromKafka(ReceiveMessageDto receiveMessage) {
+            long userId = receiveMessage.getUserId();
+            if (userRepository.isActualSubscribeUsers(userId)) {
+                sendNotificationToTelegram(mapReceiveMessageToSendMessage(receiveMessage));
+            }
+    }
+
+    private String sendNotificationToTelegram(SendMessageDto sendMessageDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<SendMessageDto> entity = new HttpEntity<>(sendMessageDto, headers);
@@ -62,7 +72,6 @@ public class NotificationServiceImpl implements NotificationService {
         SendMessageDto sendMessageDto = new SendMessageDto();
         sendMessageDto.setChatId(String.valueOf(receiveMessageDto.getUserId()));
         sendMessageDto.setText(receiveMessageDto.getText());
-        //todo other params
         return sendMessageDto;
     }
 

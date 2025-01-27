@@ -1,6 +1,28 @@
+x-kafka-common: &kafka-common
+  image: 'bitnami/kafka:latest'
+  ports:
+    - "9092"
+  networks:
+    - kafka
+  healthcheck:
+    test: "bash -c 'printf \"\" > /dev/tcp/127.0.0.1/9092; exit $$?;'"
+    interval: 5s
+    timeout: 10s
+    retries: 3
+    start_period: 30s
+  restart: unless-stopped
+
+x-kafka-env-common: &kafka-env-common
+  KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
+  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-0:9093,1@kafka-1:9093
+  KAFKA_KRAFT_CLUSTER_ID: exampleKafkaKd
+  KAFKA_CFG_PROCESS_ROLES: controller,broker
+  KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+  EXTRA_ARGS: "-Xms128m -Xmx256m"
+
 services:
   telegram-backend:
-    image: server:0.0.3
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,6 +30,27 @@ services:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://telegram-db/notification_test_db
+      - KAFKA_URL=kafka-0:9092
+      - KAFKA_TOPIC=telegram
+    networks:
+      - kafka
+
+  kafka-0:
+    <<: *kafka-common
+    environment:
+      <<: *kafka-env-common
+      KAFKA_CFG_NODE_ID: 0
+    volumes:
+      - kafka_0_data:/bitnami/kafka
+
+  kafka-1:
+    <<: *kafka-common
+    environment:
+      <<: *kafka-env-common
+      KAFKA_CFG_NODE_ID: 1
+    volumes:
+      - kafka_1_data:/bitnami/kafka
+
   telegram-db:
     image: postgres:16
     ports:
@@ -23,6 +66,15 @@ services:
       retries: 5
     volumes:
       - 'telegram-postgres-data:/var/lib/postgresql/data'
+    networks:
+      - kafka
+
+networks:
+  kafka:
 
 volumes:
   telegram-postgres-data:
+  kafka_0_data:
+    driver: local
+  kafka_1_data:
+    driver: local

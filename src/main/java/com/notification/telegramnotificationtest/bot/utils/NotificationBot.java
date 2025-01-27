@@ -1,7 +1,7 @@
 package com.notification.telegramnotificationtest.bot.utils;
 
 import com.notification.telegramnotificationtest.bot.exception.AlreadyHaveSubscribeException;
-import com.notification.telegramnotificationtest.bot.service.ITelegramFacade;
+import com.notification.telegramnotificationtest.bot.service.interfaces.ITelegramFacade;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

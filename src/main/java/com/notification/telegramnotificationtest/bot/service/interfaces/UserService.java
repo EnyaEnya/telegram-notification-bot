@@ -1,4 +1,4 @@
-package com.notification.telegramnotificationtest.bot.service;
+package com.notification.telegramnotificationtest.bot.service.interfaces;
 
 import org.telegram.telegrambots.meta.api.objects.User;
 

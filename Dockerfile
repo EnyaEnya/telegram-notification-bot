@@ -13,3 +13,8 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /opt/app
 COPY --from=builder /opt/app/target/*.jar /opt/app/*.jar
 ENTRYPOINT ["java", "-jar", "/opt/app/*.jar"]
+#
+#FROM eclipse-temurin:21-jre-alpine
+#WORKDIR /opt/app
+#ADD ./target/saqweq-1.0-SNAPSHOT.jar app.jar
+#ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]

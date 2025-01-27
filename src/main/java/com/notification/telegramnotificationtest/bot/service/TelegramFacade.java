@@ -1,7 +1,7 @@
-package com.notification.telegramnotificationtest.bot.service.impl;
+package com.notification.telegramnotificationtest.bot.service;
 
-import com.notification.telegramnotificationtest.bot.service.ITelegramFacade;
-import com.notification.telegramnotificationtest.bot.service.UserService;
+import com.notification.telegramnotificationtest.bot.service.interfaces.ITelegramFacade;
+import com.notification.telegramnotificationtest.bot.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;

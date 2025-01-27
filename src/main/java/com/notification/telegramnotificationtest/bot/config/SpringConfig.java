@@ -1,10 +1,11 @@
 package com.notification.telegramnotificationtest.bot.config;
 
-import com.notification.telegramnotificationtest.bot.service.ITelegramFacade;
+import com.notification.telegramnotificationtest.bot.service.interfaces.ITelegramFacade;
 import com.notification.telegramnotificationtest.bot.utils.NotificationBot;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 

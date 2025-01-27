@@ -1,21 +1,20 @@
 package com.notification.telegramnotificationtest.bot.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
 
 @Getter
 @Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReceiveMessageDto {
 
-    private String head;
-
     private String text;
-
-    private Instant receiveTime;
 
     private Long userId;
 
 }
+

@@ -1,9 +1,9 @@
-package com.notification.telegramnotificationtest.bot.service.impl;
+package com.notification.telegramnotificationtest.bot.service;
 
 import com.notification.telegramnotificationtest.bot.entity.BotUser;
 import com.notification.telegramnotificationtest.bot.exception.AlreadyHaveSubscribeException;
 import com.notification.telegramnotificationtest.bot.repository.UserRepository;
-import com.notification.telegramnotificationtest.bot.service.UserService;
+import com.notification.telegramnotificationtest.bot.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
